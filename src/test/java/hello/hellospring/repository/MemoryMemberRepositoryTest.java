@@ -16,6 +16,7 @@ class MemoryMemberRepositoryTest {
     MemoryMemberRepository repository = new MemoryMemberRepository();
 
     @AfterEach
+    // 순서에 상관없이 테스트하기 때문에 테스트가 하나 끝날 때 마다 값을 비워줘야 한다.
     public void afterEach() {
         repository.clearStore();
     }
