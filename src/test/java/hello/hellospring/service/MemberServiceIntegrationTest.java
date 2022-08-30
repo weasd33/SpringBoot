@@ -1,26 +1,33 @@
 package hello.hellospring.service;
 
 import hello.hellospring.domain.Member;
+import hello.hellospring.repository.MemberRepository;
 import hello.hellospring.repository.MemoryMemberRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@SpringBootTest // 스프링 컨테이너와 테스트를 함께 실행한다.
+@Transactional
 /*
-    MemberServiceIntegrationTest가 있는데 MemberServiceTest를 냅두는 이유는 속도의 차이이다.
-    MemberServiceIntegrationTest는 Spring 컨테이너까지 올려서 테스트를 하는 통합테스트이고
-    MemberServiceTest는 순수 자바 코드로만 테스트를 하는 단위테스트이기 때문에 규모가 커질수록 속도의 차이가 많이 난다.
-    그렇기 때문에 웬만해서는 단위테스트를 할 수 있도록 하고 어쩔 수 없이 통합테스트를 하게 된다면 테스트 설계가 잘못 된 가능성이 높다.
- */
-class MemberServiceTest {
+    @Transactional은 테스트를 실행하기 전에 트랜잭션을 먼저 실행한다.
+    그 후 DB의 데이터를 삽입 후 테스트가 끝나면 RollBack을 해준다.
+    이렇게 하면 DB에 데이터가 남지 않으므로 다음 테스트에 영향을 주지 않는다.
+*/
+class MemberServiceIntegrationTest {
 
-    MemberService memberService;
-    MemoryMemberRepository memberRepository;
+    // 테스트 코드 같은 경우 테스트에만 사용되기에
+    // 편하게 핃드에 어노테이션을 달아줘도 된다.
+    @Autowired MemberService memberService;
+    @Autowired MemberRepository memberRepository;
 
+/*  아래 내용은 @Transactional이 처리해준다.
     @BeforeEach
     public void beforeEach() {
         // 테스트 할 때 같은 인스턴스를 사용할 수 있도록 외부에서 주입하도록 한다.(DI)
@@ -28,17 +35,20 @@ class MemberServiceTest {
         memberService = new MemberService(memberRepository);
     }
 
+
+
     @AfterEach
     public void afterEach() {
         memberRepository.clearStore();
     }
+*/
 
     @Test
     // 테스트 코드 같은 경우 빌드할 때 제외되기 때문에 한글로 작성해도 된다.
     void 회원가입() {
         //given
         Member member = new Member();
-        member.setName("hello");
+        member.setName("spring");
 
         //when
         Long saveId = memberService.join(member);
